@@ -27,7 +27,7 @@ export async function createNote(
 
 export async function deleteNote(formData: FormData): Promise<void> {
   const userId = await requireUserId();
-  const id = z.string().uuid().parse(formData.get("id"));
+  const id = z.uuid().parse(formData.get("id"));
   // RLS + the runScoped context guarantee a user can only delete their own row.
   await runScoped(userId, (tx) => tx.note.deleteMany({ where: { id, userId } }));
   revalidatePath("/notes");

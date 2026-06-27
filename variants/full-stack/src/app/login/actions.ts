@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { err, type Result } from "@/lib/result";
 
 const Credentials = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8),
 });
 
