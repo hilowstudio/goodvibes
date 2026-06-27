@@ -19,10 +19,12 @@ understand the parts; give them one clear step at a time and wait.
 4. Apply the database setup: run the migrations in `prisma/migrations/` and the runtime
    role in `prisma/sql/runtime-role.sql` against the direct connection (the file's
    comment explains the one password setting it needs). Then set `RUNTIME_DATABASE_URL`
-   to a connection string for the `app_runtime` role.
+   to a connection string for the `app_runtime` role on the direct connection (port 5432).
 
 ## Inngest (background jobs)
-1. Have them create an Inngest account and an app.
+1. Have them create an Inngest account. The app registers itself automatically on the
+   first sync of the project's `/api/inngest` route (when the dev server runs or a
+   deploy happens), so there is no separate "create app" button to find.
 2. Get the event key and signing key and put them in `.env` as `INNGEST_EVENT_KEY` and
    `INNGEST_SIGNING_KEY`.
 3. For local development, the Inngest dev server runs the jobs without these keys.
