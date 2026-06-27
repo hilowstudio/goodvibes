@@ -49,6 +49,18 @@ conversation calls for them:
 
 These run on intent. The person does not need to invoke them.
 
+## Checking the work and handing off
+
+Two more skills run on intent while you build:
+
+- **Checking the work:** ask Claude to check the project ("is this safe", "did you
+  really do that") and it runs a plain-language health check (secrets out of the code,
+  the app builds, the per-user isolation test is in place for full-stack apps).
+- **Handing off:** when you are ready to give the project to a developer, ask Claude to
+  prepare the handoff. It runs a readiness gate and writes a `HANDOFF.md` that tells
+  the developer what the app does, what is built, what is still needed, and how to run
+  it.
+
 ## Repo layout
 
 - `.claude-plugin/`: plugin manifests.
