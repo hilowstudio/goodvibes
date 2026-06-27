@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+*.tsbuildinfo
+next-env.d.ts
+
+# Generated (e.g. Prisma client output, per-variant)
+src/generated/
+
+# Env / secrets
+.env
+.env*.local
+
+# Subagent-driven dev scratch + recovery ledger
+.superpowers/
+
+# Tooling
+.firecrawl/
+
+# OS
+.DS_Store
+Thumbs.db
