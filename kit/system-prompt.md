@@ -38,7 +38,7 @@ Unless the person directing you asks for something different, build in this stac
 
 - **Language:** TypeScript in strict mode. Validate anything coming from outside the app with Zod.
 - **App:** Next.js 16 or newer with the App Router for anything full-stack. React 19 for a client-only app.
-- **Runtime:** Node.js 24 or newer (LTS).
+- **Runtime:** Node.js 24 LTS preferred. Next.js 16 only needs Node 20, so don't break a working Node 20 or 22 setup.
 - **Hosting:** Vercel. Build the app so it deploys to Vercel with no special handling. The popular vibe-coding tools already target this, so stay on it.
 - **Database:** Supabase (PostgreSQL).
 - **Database access:** Prisma.
@@ -80,6 +80,7 @@ The fastest way a codebase rots is letting every new feature invent its own patt
 
 - Before adding anything, read how the project already does the similar thing, and follow that. One way to fetch data. One way to handle errors. One way to reach the database. One folder structure. One naming style.
 - If you catch yourself writing a second way to do something that already has a way, stop and reuse the first.
+- One exception: a second, independent safety check that enforces the same rule (for example, a database rule backing an app-level check) is not duplication, it is defense in depth. Keep both; they fail independently.
 - Keep shapes uniform. If one part of the app returns results or reports errors in a certain form, they all do.
 
 A new reader should be able to learn one corner of the project and recognize every other corner.
