@@ -33,3 +33,7 @@ The request interceptor file is `proxy.ts`. Next.js 16 renamed `middleware.ts` t
 ## Cross-Boundary Serialization
 
 `superjson` is a documented convention for sending `Date` and `Decimal` across the server/client boundary. It is not wired into this minimal scaffold yet. Add it when a feature needs those types.
+
+## GoodVibes Scaffold Version
+
+This project was scaffolded by the GoodVibes plugin. The scaffold version is recorded in a `.goodvibes` marker file at the project root once the `/goodvibes` init routine stamps it. That init step is a later part of the GoodVibes system, so the marker may not be present yet.
