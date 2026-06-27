@@ -6,9 +6,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: variants/full-stack
     services:
       postgres:
         image: postgres:16
@@ -31,7 +28,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: variants/full-stack/package-lock.json
+          cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npm run prisma:generate
       - name: Apply migrations as owner

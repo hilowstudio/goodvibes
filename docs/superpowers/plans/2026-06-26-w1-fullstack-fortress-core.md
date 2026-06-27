@@ -161,7 +161,7 @@ Expected: install succeeds; `tsc --noEmit` exits 0; `next build` completes (root
 - [ ] **Step 7: Commit**
 
 ```bash
-git add variants/full-stack/package.json variants/full-stack/tsconfig.json variants/full-stack/.env.example variants/full-stack/.gitignore variants/full-stack/src/app
+git add variants/full-stack/package.json variants/full-stack/package-lock.json variants/full-stack/tsconfig.json variants/full-stack/.env.example variants/full-stack/.gitignore variants/full-stack/src/app
 git commit -m "feat(full-stack): scaffold project config, env, and root layout"
 ```
 
@@ -302,7 +302,11 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 // The ONE PrismaClient in the entire variant. Do not instantiate another.
 // Runtime uses the pooled DATABASE_URL (port 6543, ?pgbouncer=true).
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set");
+}
+const adapter = new PrismaPg({ connectionString });
 
 export const prisma = new PrismaClient({ adapter });
 ```
@@ -467,14 +471,20 @@ git commit -m "feat(full-stack): idempotent non-owner runtime role provisioning"
 ```ts
 import { Pool } from "pg";
 
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} is not set`);
+  return value;
+}
+
 // Owner connection (DIRECT_URL): used for schema reset and seeding.
 // Because the table is FORCE RLS, even the owner must set a user context to
 // insert; seedNote sets it transaction-locally for the row it plants.
-export const ownerPool = new Pool({ connectionString: process.env.DIRECT_URL });
+export const ownerPool = new Pool({ connectionString: requireEnv("DIRECT_URL") });
 
 // Non-owner runtime connection: what the app and the keystone test use.
 export const runtimePool = new Pool({
-  connectionString: process.env.RUNTIME_DATABASE_URL,
+  connectionString: requireEnv("RUNTIME_DATABASE_URL"),
 });
 
 export async function resetNotes(): Promise<void> {
