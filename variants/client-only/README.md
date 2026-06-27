@@ -1,32 +1,39 @@
-# React + TypeScript + Vite
+# GoodVibes client-only
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A browser-only starter for a page, tool, dashboard, or presentation that runs entirely client-side. Nothing to provision; open it and it works.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19
+- Vite with TypeScript (strict)
+- Tailwind v4 (via `@tailwindcss/vite`)
+- DuckDB-WASM for in-browser data queries
+- Zod for runtime validation
 
-## React Compiler
+## Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```sh
+npm install
+npm run dev      # local dev server with HMR
+npm run build    # production build to dist/
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Optional shared-password gate
+
+Set `VITE_GATE_PASSWORD` in a `.env` file (copy `.env.example` as a starting point). When set, visitors must enter that password before seeing the page. This is a privacy measure, not a security control: the password ships in the bundle and is visible to anyone who inspects it.
+
+## In-browser data with DuckDB-WASM
+
+The DuckDB-WASM integration lets you query a bundled dataset directly in the browser with no server required. Be aware that it ships a large WebAssembly bundle (several MB gzipped). This tradeoff is well-suited to analytical or data-viz apps but is overkill for a minimal brochure page.
+
+## Deploying to Vercel
+
+Vercel auto-detects the Vite project and builds to `dist/`. The included `vercel.json` rewrites all routes to `index.html` so client-side routing works correctly.
+
+## Tests
+
+```sh
+npm test
+```
+
+Tests use Vitest and React Testing Library with a jsdom environment.
