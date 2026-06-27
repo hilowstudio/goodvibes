@@ -38,10 +38,18 @@ if (cmd === "create") {
     console.error(`unknown variant: ${variant}`); process.exit(1);
   }
   // 1. Copy the variant into cwd, skipping deps and build artifacts.
+  // Skip whole dirs by segment name, and a few files by name (build cache + real
+  // env files). Keep .env.example — it is a wanted template.
   const SKIP = new Set(["node_modules", "dist", ".next", ".git"]);
+  const skipFile = (name) =>
+    name.endsWith(".tsbuildinfo") || name === ".env" || /^\.env\..*local$/.test(name);
   cpSync(join(pluginRoot, "variants", variant), cwd, {
     recursive: true,
-    filter: (src) => !src.split(/[\\/]/).some((seg) => SKIP.has(seg)),
+    filter: (src) => {
+      const segs = src.split(/[\\/]/);
+      if (segs.some((seg) => SKIP.has(seg))) return false;
+      return !skipFile(segs[segs.length - 1]);
+    },
   });
 
   // 2. Compose CLAUDE.md: system-prompt body below the line-18 '---' + the two additions.
@@ -61,7 +69,7 @@ if (cmd === "create") {
 
   // 4. Version stamp.
   const manifest = JSON.parse(readFileSync(join(pluginRoot, ".claude-plugin", "plugin.json"), "utf8"));
-  const stamp = { plugin: "goodvibes", version: manifest.version ?? "unknown", variant, generatedAt: arg("now") ?? "" };
+  const stamp = { plugin: "goodvibes", version: manifest.version ?? "unknown", variant, generatedAt: new Date().toISOString() };
   writeFileSync(join(cwd, ".goodvibes"), JSON.stringify(stamp, null, 2) + "\n");
 
   console.log(`scaffolded ${variant} (goodvibes ${stamp.version})`);
