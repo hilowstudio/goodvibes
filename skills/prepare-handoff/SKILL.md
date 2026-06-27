@@ -31,7 +31,8 @@ em dashes), covering:
 - **What is not done / still needed**: any half-built parts, services not yet
   connected, or known gaps. Be honest here; this is the most useful section for the
   developer.
-- **How to run it locally**: point to the README steps and the environment variables.
+- **How to run it locally**: after confirming the README's run steps are in place (the
+  readiness gate above checks this), point to them and the environment variables.
 - **Where the rules and reasoning live**: `CLAUDE.md` for the build conventions, the
   `docs/` folder for the reasoning (the principled-coding, design, and voice guides),
   and `DECISIONS.md` for the consequential choices.
