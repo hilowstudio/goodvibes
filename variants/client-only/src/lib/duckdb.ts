@@ -28,7 +28,8 @@ async function getDb(): Promise<duckdb.AsyncDuckDB> {
     dbPromise = (async () => {
       try {
         const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
-        const worker = new Worker(bundle.mainWorker!);
+        if (!bundle.mainWorker) throw new Error("DuckDB bundle is missing a worker");
+        const worker = new Worker(bundle.mainWorker);
         const db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
         await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
         await db.registerFileText("sample.csv", sampleCsv);
