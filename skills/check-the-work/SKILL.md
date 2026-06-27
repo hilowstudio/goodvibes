@@ -14,12 +14,16 @@ apply by inspecting the project.
 - **Secrets are out of the code.** Search the project for hardcoded keys, tokens, and
   passwords. Confirm real secrets live only in `.env` (not committed) and that `.env`
   is in `.gitignore`. The Supabase anon key in `.env.example` and `NEXT_PUBLIC_`
-  values are meant to be public, so those are fine; flag anything else.
+  values are meant to be public, so those are fine; flag anything else. For a
+  client-only project, a non-empty `VITE_GATE_PASSWORD` (or any `VITE_` value) is
+  intentionally public, since `VITE_` values ship in the browser bundle; the
+  `.env.example` comment already explains the gate is privacy, not security. Do not
+  call this a breach, but if the gate password is set, mention it as a privacy note.
 - **The app still builds.** Run the project's build (`npm run build`). Report pass or
   the first real error in plain language.
-- **DECISIONS.md is current.** Open `DECISIONS.md` and check it mentions the
-  consequential choices made so far. If recent significant work is not reflected,
-  say what is missing.
+- **DECISIONS.md is current.** If `DECISIONS.md` is present, open it and check it
+  mentions the consequential choices made so far; if recent significant work is not
+  reflected, say what is missing. If the file is absent, just note that.
 - **Nothing is half-built.** Look for obvious dead code, commented-out blocks, or
   features that were started and abandoned. Name any you find.
 
