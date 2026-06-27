@@ -42,4 +42,5 @@ a normal API call over a heavier integration.
 ## 5. Add the env var to .env.example
 Add the new variable name (with a placeholder, no real value) to `.env.example` so the
 next person knows it is needed, and confirm the real value is only in `.env` (which
-git ignores).
+git ignores). Confirm `.env` is listed in `.gitignore` before committing, so the real
+value never lands in git.
