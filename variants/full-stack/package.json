@@ -7,6 +7,7 @@
     "build": "next build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "lint": "oxlint",
     "prisma:generate": "prisma generate",
     "db:deploy": "prisma migrate deploy"
   },
@@ -34,6 +35,7 @@
     "@types/node": "^22.0.0",
     "@types/pg": "^8.11.0",
     "@types/react": "^19.0.0",
+    "oxlint": "^1.71.0",
     "prisma": "^6.16.0",
     "typescript": "^5.7.0",
     "vitest": "^2.1.0"

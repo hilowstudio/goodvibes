@@ -41,5 +41,6 @@ jobs:
             -c "SET goodvibes.runtime_password = 'runtimepw';" \
             -f prisma/sql/runtime-role.sql
       - run: npm run typecheck
+      - run: npm run lint
       - run: npm test
       - run: npm run build
