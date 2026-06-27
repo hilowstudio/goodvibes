@@ -83,4 +83,4 @@ The keystone test (`tests/isolation.test.ts`) proves that one user cannot read a
 - Each user's data is isolated by default. Team or organization multi-tenancy is the documented extension to grow into.
 - The app connects to Postgres as a non-owner role with no row-level security bypass. Isolation is enforced at the database layer.
 - Supabase Auth provides the signed-in user's ID, which is used directly as the per-user data access key. There's no separate users table.
-- Built with the GoodVibes scaffold.
+- Built with the GoodVibes scaffold. The scaffold version is recorded in a `.goodvibes` marker file at the project root once present.
