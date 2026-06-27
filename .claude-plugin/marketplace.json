@@ -4,7 +4,7 @@
   "plugins": [
     {
       "name": "goodvibes",
-      "source": ".",
+      "source": "./",
       "description": "Scaffold and build production-shaped apps on the Hi-Low Studio stack."
     }
   ]
