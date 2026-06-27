@@ -83,7 +83,7 @@ jobs:
           TMP2=$(mktemp -d)
           node scripts/scaffold.mjs create --variant client-only --plugin-root "$(pwd)" --cwd "$TMP2"
           test ! -e "$TMP2/AGENTS.md"
-          grep -vq "@AGENTS.md" "$TMP2/CLAUDE.md"
+          ! grep -q "@AGENTS.md" "$TMP2/CLAUDE.md"
           if node scripts/scaffold.mjs check --cwd "$TMP"; then echo "guard should have failed on populated dir"; exit 1; fi
           echo "scaffold smoke OK"
 
