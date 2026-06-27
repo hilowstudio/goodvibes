@@ -1,0 +1,11 @@
+{
+  "name": "goodvibes",
+  "owner": { "name": "Hi-Low Studio" },
+  "plugins": [
+    {
+      "name": "goodvibes",
+      "source": ".",
+      "description": "Scaffold and build production-shaped apps on the Hi-Low Studio stack."
+    }
+  ]
+}
