@@ -71,13 +71,19 @@ jobs:
         run: |
           TMP=$(mktemp -d)
           node scripts/scaffold.mjs check --cwd "$TMP"
-          node scripts/scaffold.mjs create --variant client-only --plugin-root "$(pwd)" --cwd "$TMP"
+          node scripts/scaffold.mjs create --variant full-stack --plugin-root "$(pwd)" --cwd "$TMP"
           test -f "$TMP/package.json"
           test -f "$TMP/CLAUDE.md"
           test -f "$TMP/.goodvibes"
           test -f "$TMP/docs/principled-coding.md"
           test ! -e "$TMP/node_modules"
           head -1 "$TMP/CLAUDE.md" | grep -vq "How to use this"
+          test -f "$TMP/AGENTS.md"
+          grep -q "@AGENTS.md" "$TMP/CLAUDE.md"
+          TMP2=$(mktemp -d)
+          node scripts/scaffold.mjs create --variant client-only --plugin-root "$(pwd)" --cwd "$TMP2"
+          test ! -e "$TMP2/AGENTS.md"
+          grep -vq "@AGENTS.md" "$TMP2/CLAUDE.md"
           if node scripts/scaffold.mjs check --cwd "$TMP"; then echo "guard should have failed on populated dir"; exit 1; fi
           echo "scaffold smoke OK"
 
