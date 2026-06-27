@@ -1,0 +1,35 @@
+# Decisions
+
+All dates are 2026-06-26.
+
+## Data Isolation Model
+
+Per-user data isolation is the default. Team or organization multi-tenancy is the documented extension.
+
+## Database Connection Pooling
+
+The runtime database URL must keep `?pgbouncer=true` on the transaction pooler. Do not remove it. It disables prepared statements that the pooler can't support, and removing it causes intermittent errors under load.
+
+## Database Role and Row-Level Security
+
+The app connects to Postgres as a non-owner role (`app_runtime`) with no bypass of row-level security. The database enforces isolation even if app code slips.
+
+## User Identification
+
+Supabase Auth provides the signed-in user's ID, which is used directly as the per-user key for data access. There is no separate users table.
+
+## Styling
+
+Styling uses Tailwind v4, which is CSS-first. Design tokens live in `globals.css`, not a JavaScript config.
+
+## Request Interceptor
+
+The request interceptor file is `proxy.ts`. Next.js 16 renamed `middleware.ts` to `proxy.ts`.
+
+## NPM Configuration
+
+`.npmrc` sets `legacy-peer-deps=true` so installs resolve an optional Inngest peer dependency cleanly.
+
+## Cross-Boundary Serialization
+
+`superjson` is a documented convention for sending `Date` and `Decimal` across the server/client boundary. It is not wired into this minimal scaffold yet. Add it when a feature needs those types.
