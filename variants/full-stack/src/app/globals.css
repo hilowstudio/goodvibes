@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  /* Calm-tech palette — semantic names only. */
+  --color-surface: oklch(0.99 0.005 95);
+  --color-surface-muted: oklch(0.97 0.005 95);
+  --color-primary: oklch(0.25 0.01 260);
+  --color-secondary: oklch(0.45 0.01 260);
+  --color-accent: oklch(0.62 0.13 250);
+  --color-status-danger: oklch(0.55 0.18 25);
+  --color-status-success: oklch(0.6 0.13 150);
+  --color-border: oklch(0.9 0.005 95);
+
+  /* Type: serif headings, sans body; 1.25 modular scale. */
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-serif: ui-serif, Georgia, serif;
+  --text-sm: 0.8rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5625rem;
+  --text-2xl: 1.953rem;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
