@@ -1,0 +1,8 @@
+{
+  "name": "goodvibes-adapters",
+  "private": true,
+  "type": "module",
+  "scripts": { "typecheck": "tsc --noEmit", "lint": "oxlint" },
+  "dependencies": { "zod": "^3.24.0" },
+  "devDependencies": { "@types/node": "^22.0.0", "oxlint": "^1.0.0", "typescript": "^5.7.0" }
+}
