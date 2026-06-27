@@ -1,3 +1,15 @@
+> **Note for the developer who inherits this project.** This essay is the reasoning
+> behind the conventions used here. It is written as a worked example against one
+> specific app, a children's learning product whose worst-case failure is a cross-
+> tenant leak of children's data, so read it for the way of thinking, not the
+> specific domain. Two mappings to this project: where the essay says
+> "organization / tenant isolation," this project's default is the simpler per-user
+> isolation (user A cannot read user B's data); where it shows a composite
+> (organizationId, parentId) key, the equivalent here is scoping every row to the
+> signed-in user. The principles are identical; only the worked example's tenant
+> boundary differs. If this app grows into teams, the essay's org model is the
+> documented path to follow.
+
 # What a Perfect Codebase Looks Like Here
 
 Read this before you touch the project. It explains how we think about rigor, so that when you hit a decision this document doesn't cover, and you will, often, you can derive the answer the way the rest of us would. It's a way of thinking, written down. Learn the thinking and the thousand small calls take care of themselves.
