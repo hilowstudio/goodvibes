@@ -41,3 +41,7 @@ The linter is oxlint (not ESLint or Prettier). Configuration lives in `.oxlintrc
 ## GoodVibes Scaffold Version
 
 This project was scaffolded by the GoodVibes plugin. The scaffold version is recorded in a `.goodvibes` marker file at the project root once the `/goodvibes` init routine stamps it. That init step is a later part of the GoodVibes system, so the marker may not be present yet.
+
+## Next.js Documentation Source for AI Agents
+
+An `AGENTS.md` at the project root points AI agents at the Next.js docs bundled with the installed package at `node_modules/next/dist/docs/`. Those docs match the exact Next.js version in use, so they are more reliable than agent training data, which can lag behind the installed version. `CLAUDE.md` imports `AGENTS.md` with `@AGENTS.md` so Claude Code picks up the same instruction automatically. This applies to full-stack only; client-only projects do not use Next.js and ship no `AGENTS.md`.

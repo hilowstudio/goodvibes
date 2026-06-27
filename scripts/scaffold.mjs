@@ -58,7 +58,10 @@ if (cmd === "create") {
   const body = marker >= 0 ? sp.slice(marker + 5) : sp;
   const add1 = readFileSync(join(pluginRoot, "kit", "_additions", "integration-guardrails.md"), "utf8");
   const add2 = readFileSync(join(pluginRoot, "kit", "_additions", "storage-calibration.md"), "utf8");
-  writeFileSync(join(cwd, "CLAUDE.md"), `${body.trim()}\n\n${add1.trim()}\n\n${add2.trim()}\n`);
+  // Full-stack ships an AGENTS.md pointing agents at Next.js's version-matched
+  // bundled docs; import it into CLAUDE.md so Claude Code reads it too.
+  const agentsImport = variant === "full-stack" ? "\n@AGENTS.md\n" : "";
+  writeFileSync(join(cwd, "CLAUDE.md"), `${body.trim()}\n\n${add1.trim()}\n\n${add2.trim()}\n${agentsImport}`);
 
   // 3. Copy the developer-facing docs into docs/.
   const docsDir = join(cwd, "docs");
