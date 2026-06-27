@@ -25,7 +25,8 @@ async function call(path: string, init?: RequestInit): Promise<Result<unknown>> 
     });
     if (!res.ok) return err(`Airtable request failed (${res.status})`);
     return ok((await res.json()) as unknown);
-  } catch {
+  } catch (error) {
+    console.error(error);
     return err("Airtable request timed out or failed");
   } finally {
     clearTimeout(timer);
