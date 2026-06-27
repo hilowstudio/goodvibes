@@ -36,6 +36,19 @@ It writes three artifacts:
 
 **Browser-only:** React 19 plus Vite SPA, optional DuckDB-WASM for in-browser data, optional shared-password gate (privacy, not security), deploys to Vercel static hosting.
 
+## Build-time skills
+
+While building, Claude can guide the person through two things automatically, when the
+conversation calls for them:
+
+- **Connecting an outside service** (Airtable, payments, email, any API). It conducts
+  the integration safely: read-only by default, keys kept on the server, responses
+  validated, with vetted Airtable and MotherDuck adapters in `kit/adapters/`.
+- **Setting up the backend** for a full-stack project (creating the Supabase project
+  and Inngest app and putting the keys in place).
+
+These run on intent. The person does not need to invoke them.
+
 ## Repo layout
 
 - `.claude-plugin/`: plugin manifests.

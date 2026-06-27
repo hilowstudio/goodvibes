@@ -80,3 +80,19 @@ jobs:
           head -1 "$TMP/CLAUDE.md" | grep -vq "How to use this"
           if node scripts/scaffold.mjs check --cwd "$TMP"; then echo "guard should have failed on populated dir"; exit 1; fi
           echo "scaffold smoke OK"
+
+  adapters:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: kit/adapters
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: kit/adapters/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
