@@ -1,0 +1,82 @@
+name: goodvibes monorepo CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  full-stack:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: variants/full-stack
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: ownerpw
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DIRECT_URL: postgresql://postgres:ownerpw@localhost:5432/postgres
+      RUNTIME_DATABASE_URL: postgresql://app_runtime:runtimepw@localhost:5432/postgres
+      DATABASE_URL: postgresql://app_runtime:runtimepw@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: variants/full-stack/package-lock.json
+      - run: npm ci
+      - run: npm run prisma:generate
+      - name: Apply migrations as owner
+        run: |
+          psql "$DIRECT_URL" -v ON_ERROR_STOP=1 -f prisma/migrations/0001_init/migration.sql
+          psql "$DIRECT_URL" -v ON_ERROR_STOP=1 -f prisma/migrations/0002_rls/migration.sql
+      - name: Create non-owner runtime role
+        run: psql "$DIRECT_URL" -v ON_ERROR_STOP=1 -c "SET goodvibes.runtime_password = 'runtimepw';" -f prisma/sql/runtime-role.sql
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  client-only:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: variants/client-only
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: variants/client-only/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - run: npm test
+
+  scaffold-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Scaffold script produces a clean project
+        run: |
+          TMP=$(mktemp -d)
+          node scripts/scaffold.mjs check --cwd "$TMP"
+          node scripts/scaffold.mjs create --variant client-only --plugin-root "$(pwd)" --cwd "$TMP"
+          test -f "$TMP/package.json"
+          test -f "$TMP/CLAUDE.md"
+          test -f "$TMP/.goodvibes"
+          test -f "$TMP/docs/principled-coding.md"
+          test ! -e "$TMP/node_modules"
+          head -1 "$TMP/CLAUDE.md" | grep -vq "How to use this"
+          if node scripts/scaffold.mjs check --cwd "$TMP"; then echo "guard should have failed on populated dir"; exit 1; fi
+          echo "scaffold smoke OK"
