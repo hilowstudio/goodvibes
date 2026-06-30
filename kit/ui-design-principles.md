@@ -3,7 +3,7 @@
 ## 1. DESIGN & AESTHETIC PRINCIPLES
 
 ### CORE PHILOSOPHY
-- **Calm Tech:** The interface must not scream for attention. Avoid "doom-loop" patterns.
+- **Clean UI:** The interface must not scream for attention. It should guide the eye naturally.
 - **Utility-First:** Aesthetics follow function.
 
 ### LAYOUT & STRUCTURE
