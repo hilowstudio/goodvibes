@@ -11,10 +11,12 @@ First, read the `.goodvibes` file at the project root to learn the variant
 
 ## 1. Make sure nothing secret gets pushed (do this first)
 Pushing puts files online, so check this before anything is committed:
-- Confirm there is a `.gitignore` and that it ignores `.env`, `node_modules`, and the
-  build output (`.next/` for full-stack, `dist/` for client-only).
-- Confirm no `.env` file and no secret is already staged or tracked. Run the secrets
-  check from the check-the-work skill.
+- Confirm there is a `.gitignore` and that it ignores `.env` and `.env*.local` (where
+  real secrets live), `node_modules`, and the build output (`.next/` for full-stack,
+  `dist/` for client-only).
+- Confirm no real `.env` or `.env*.local` file would be committed, and, on a re-run,
+  that no secret is already staged or tracked. Run the secrets check from the
+  check-the-work skill.
 - For a **full-stack** project, the database URLs (`DATABASE_URL`, `DIRECT_URL`,
   `RUNTIME_DATABASE_URL`), the Inngest keys (`INNGEST_EVENT_KEY`, `INNGEST_SIGNING_KEY`),
   and any Supabase service-role key must never be committed. The
@@ -56,7 +58,7 @@ gh auth status
   instructions at cli.github.com), then run `gh auth login`.
 
 ## 5. Create the repository, or use the existing one
-If the project has no GitHub remote yet:
+If the project has no GitHub remote yet (no online copy linked):
 1. Ask, in plain language, whether the code should be private or public: "Private means
    only you and people you invite can see it. Public means anyone can. Most projects
    start private. Which do you want?" Default to private if they are unsure.
