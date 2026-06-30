@@ -60,6 +60,9 @@ Two more skills run on intent while you build:
   prepare the handoff. It runs a readiness gate and writes a `HANDOFF.md` that tells
   the developer what the app does, what is built, what is still needed, and how to run
   it.
+- **Saving to GitHub:** ask Claude to push the project to GitHub ("save my work
+  online", "put this on GitHub") and it handles committing, signing in, creating the
+  repository, and pushing, without committing any secret.
 
 ## Repo layout
 

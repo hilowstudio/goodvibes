@@ -13,6 +13,9 @@ Run the checks from the check-the-work skill (secrets out of code, the app build
 DECISIONS.md current, nothing half-built, and for full-stack: the isolation test
 exists and server secrets stay server-side). Also check:
 - The code is committed to git (no large amount of uncommitted work).
+- The project is saved to GitHub: an `origin` remote exists and there are no unpushed
+  commits. If it is not pushed yet, tell the person plainly and offer to run the
+  save-to-github skill before handing off.
 - The README's run and deploy steps are present and accurate.
 - For full-stack: note whether the live services (Supabase, Inngest) are connected
   yet, since the developer needs to know if that is still pending.
@@ -41,6 +44,7 @@ em dashes), covering:
   another's data.
 
 ## 3. Tell the person what to send
-End by telling the person, in plain language, what to give their developer: the git
-repository (pushed somewhere the developer can access), and a note that `HANDOFF.md`
-explains the rest. Confirm no secrets are in the repository before they share it.
+End by telling the person, in plain language, what to give their developer: the GitHub
+repository (if it is not pushed yet, run the save-to-github skill first), and a note
+that `HANDOFF.md` explains the rest. Confirm no secrets are in the repository before
+they share it.

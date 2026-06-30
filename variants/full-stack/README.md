@@ -84,3 +84,9 @@ The keystone test (`tests/isolation.test.ts`) proves that one user cannot read a
 - The app connects to Postgres as a non-owner role with no row-level security bypass. Isolation is enforced at the database layer.
 - Supabase Auth provides the signed-in user's ID, which is used directly as the per-user data access key. There's no separate users table.
 - Built with the GoodVibes scaffold. The scaffold version is recorded in a `.goodvibes` marker file at the project root once present.
+
+## Saving your work to GitHub
+
+To back up your project or get it ready to hand off, just ask Claude to push it to
+GitHub (for example, "save my work to GitHub"). It walks you through signing in,
+creating the repository, and pushing, without letting any secret leak.

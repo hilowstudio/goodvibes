@@ -37,3 +37,9 @@ npm test
 ```
 
 Tests use Vitest and React Testing Library with a jsdom environment.
+
+## Saving your work to GitHub
+
+To back up your project or get it ready to hand off, just ask Claude to push it to
+GitHub (for example, "save my work to GitHub"). It walks you through signing in,
+creating the repository, and pushing, without letting any secret leak.
