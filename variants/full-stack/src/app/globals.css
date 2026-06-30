@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Calm-tech palette — semantic names only. */
+  /* Clean UI palette — semantic names only. */
   --color-surface: oklch(0.99 0.005 95);
   --color-surface-muted: oklch(0.97 0.005 95);
   --color-primary: oklch(0.25 0.01 260);
