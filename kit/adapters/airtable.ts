@@ -43,7 +43,7 @@ export async function listRecords(
   baseId: string,
   table: string,
 ): Promise<Result<Array<{ id: string; fields: Record<string, unknown> }>>> {
-  const r = await call(`${baseId}/${encodeURIComponent(table)}`);
+  const r = await call(`${encodeURIComponent(baseId)}/${encodeURIComponent(table)}`);
   if (!r.ok) return r;
   const parsed = ListResponse.safeParse(r.data);
   if (!parsed.success) return err("Airtable returned data in an unexpected shape");
@@ -59,7 +59,7 @@ export async function createRecord(
   table: string,
   fields: Record<string, unknown>,
 ): Promise<Result<{ id: string }>> {
-  const r = await call(`${baseId}/${encodeURIComponent(table)}`, {
+  const r = await call(`${encodeURIComponent(baseId)}/${encodeURIComponent(table)}`, {
     method: "POST",
     body: JSON.stringify({ fields }),
   });

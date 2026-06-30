@@ -1,6 +1,6 @@
 {
   "name": "goodvibes",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Hi-Low Studio's starter kit: scaffold a production-shaped Next.js or React app and build it with disciplined, handoff-ready conventions.",
   "author": { "name": "Hi-Low Studio" }
 }

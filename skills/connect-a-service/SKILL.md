@@ -33,7 +33,10 @@ write-scoped token when a write feature is confirmed.
 
 For hosted analytical data (querying large datasets that live in the cloud), use
 `${CLAUDE_PLUGIN_ROOT}/kit/adapters/motherduck.ts` the same way, with
-`MOTHERDUCK_TOKEN` server-side.
+`MOTHERDUCK_TOKEN` server-side. Give it a read-only token (MotherDuck calls this a
+read-scaling token) so the connection cannot change data, whatever a query says. If a
+query has to include something the person typed, pass it as a separate value (a bound
+parameter), never glued into the query text.
 
 For any other service, follow the same shape: a small server module that reads the key
 from env, validates the response with Zod, returns a Result, and has a timeout. Prefer
