@@ -13,7 +13,8 @@ First, read the `.goodvibes` file at the project root to learn the variant
 Pushing puts files online, so check this before anything is committed:
 - Confirm there is a `.gitignore` and that it ignores `.env` and `.env*.local` (where
   real secrets live), `node_modules`, and the build output (`.next/` for full-stack,
-  `dist/` for client-only).
+  `dist/` for client-only). If `.gitignore` does not already list `.env`, add it before
+  going further (an older client-only project may not list it).
 - Confirm no real `.env` or `.env*.local` file would be committed, and, on a re-run,
   that no secret is already staged or tracked. Run the secrets check from the
   check-the-work skill.
@@ -22,7 +23,8 @@ Pushing puts files online, so check this before anything is committed:
   and any Supabase service-role key must never be committed. The
   `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are meant to be public,
   and `.env.example` holds only placeholders, so those are fine.
-- For a **client-only** project, the `VITE_GATE_PASSWORD` must never be committed.
+- For a **client-only** project, the `VITE_GATE_PASSWORD` must never be committed (it is
+  meant to be readable in the browser, but it still does not belong in the repo).
   `.env.example` is fine.
 
 If anything sensitive would be pushed, stop and fix it (add it to `.gitignore`, or
