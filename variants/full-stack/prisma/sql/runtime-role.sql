@@ -1,16 +1,14 @@
--- Run as the table owner / a privileged role. Idempotent.
--- Password is provided by the caller via the GUC goodvibes.runtime_password.
+-- Run after the migrations, as the table owner / a privileged role, over the
+-- direct connection. Idempotent. Run it once per database.
+-- The password comes from the GUC goodvibes.runtime_password, so set it in the same
+-- session first: SET goodvibes.runtime_password = 'the-password';
+-- VALID UNTIL 'infinity' matters on Supabase: its pooler rejects an expired role.
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'app_runtime') THEN
-    EXECUTE format(
-      'CREATE ROLE app_runtime LOGIN PASSWORD %L NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE',
-      current_setting('goodvibes.runtime_password')
-    );
-  END IF;
+  EXECUTE format(
+    'ALTER ROLE app_runtime LOGIN PASSWORD %L VALID UNTIL %L',
+    current_setting('goodvibes.runtime_password'),
+    'infinity'
+  );
 END
 $$;
-
-GRANT USAGE ON SCHEMA public TO app_runtime;
-GRANT SELECT, INSERT, UPDATE, DELETE ON "notes" TO app_runtime;
--- No table ownership, no BYPASSRLS: RLS is a real floor for this role.

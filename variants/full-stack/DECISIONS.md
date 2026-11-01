@@ -1,6 +1,6 @@
 # Decisions
 
-All dates are 2026-06-26.
+All dates are 2026-06-26 unless an entry says otherwise.
 
 ## Data Isolation Model
 
@@ -12,7 +12,25 @@ The runtime database URL must keep `?pgbouncer=true` on the transaction pooler. 
 
 ## Database Role and Row-Level Security
 
-The app connects to Postgres as a non-owner role (`app_runtime`) with no bypass of row-level security. The database enforces isolation even if app code slips.
+_Updated 2026-11-01._
+
+The app logs in to Postgres as a non-owner role (`app_runtime`) with no bypass of row-level security, so the database enforces isolation even if app code slips. `DATABASE_URL` is the only runtime connection. Through Supabase's pooler the username is `app_runtime.<project-ref>`.
+
+Do not use the connection string Supabase's dashboard shows as it stands. It logs in as `postgres`, which has `BYPASSRLS`, and that attribute turns off every policy, including `FORCE ROW LEVEL SECURITY`. The failure is silent: the app works and every user sees every row. So `src/lib/prisma.ts` refuses to start on any other login, and `tests/isolation.test.ts` runs through the app's own client. CI cannot see a deployed configuration, so `npm run db:verify` runs that test with the real `.env`.
+
+If Supabase's pooler keeps refusing `app_runtime` with a correct password (check for an expired role, then wait about 30 seconds for its credential cache), the fallback is to log in as `postgres` and drop privileges inside each transaction: run `GRANT app_runtime TO postgres`, add `set_config('role', 'app_runtime', true)` as the first statement in `runScoped`, and relax the login check in `src/lib/prisma.ts`. It is weaker, because a query outside `runScoped` then skips row-level security. Treat it as a last resort and record it here if you use it.
+
+## Table Access Grants
+
+_Dated 2026-11-01._
+
+Each table's grant to `app_runtime` is written explicitly in the migration that creates the table. Default privileges would be shorter, but they would hand the role every new table the moment it exists, including one with no row-level security yet. With explicit grants, a forgotten step is a loud "permission denied" and not a silent leak. The role is created in a migration, with its password set separately, so these grants work on a brand-new database.
+
+## Deployment Goes Through the Developer
+
+_Dated 2026-11-01._
+
+`CLAUDE.md` tells the assistant not to deploy, and to run the handoff instead. That keeps company code and data out of personal accounts and means a developer sees the app before real people do. Once the repo is connected to Vercel, every push to `main` is a production deploy, so setting `"live": true` in `.goodvibes` moves `save-to-github` to branches and pull requests. `DIRECT_URL` is the owner login and is not set in Vercel.
 
 ## User Identification
 
@@ -40,7 +58,7 @@ The linter is oxlint (not ESLint or Prettier). Configuration lives in `.oxlintrc
 
 ## GoodVibes Scaffold Version
 
-This project was scaffolded by the GoodVibes plugin. The scaffold version is recorded in a `.goodvibes` marker file at the project root once the `/goodvibes` init routine stamps it. That init step is a later part of the GoodVibes system, so the marker may not be present yet.
+This project was scaffolded by the GoodVibes plugin. The scaffold version is recorded in the `.goodvibes` marker file at the project root, which `/goodvibes` writes when it creates the project. The same file holds the `live` flag.
 
 ## Next.js Documentation Source for AI Agents
 

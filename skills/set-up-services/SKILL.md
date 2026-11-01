@@ -13,13 +13,40 @@ understand the parts; give them one clear step at a time and wait.
 2. From the project's API settings, get the project URL and the anon key. Put them in
    a local `.env` file as `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
    These two are safe to expose. Do not put the service-role key in the app.
-3. From the project's database settings, get the connection strings. Set `DATABASE_URL`
-   to the transaction pooler URL (port 6543) and keep `?pgbouncer=true` on it. Set
-   `DIRECT_URL` to the direct connection (port 5432). Both go in `.env`, never in git.
-4. Apply the database setup: run the migrations in `prisma/migrations/` and the runtime
-   role in `prisma/sql/runtime-role.sql` against the direct connection (the file's
-   comment explains the one password setting it needs). Then set `RUNTIME_DATABASE_URL`
-   to a connection string for the `app_runtime` role on the direct connection (port 5432).
+3. From the project's Connect dialog, copy the direct connection string (port 5432)
+   into `.env` as `DIRECT_URL`. This is the owner login, used for migrations and tests.
+   It stays in `.env`, never in git and never in Vercel. If the direct connection will
+   not connect from their network, it may need IPv6; use the Session pooler string from
+   the same dialog instead (also port 5432).
+4. Create the tables and the app's database role: `npm run db:deploy`.
+5. Give that role a password. Generate one with letters and digits only, so it needs no
+   escaping inside a URL:
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"
+   ```
+   Then run `prisma/sql/runtime-role.sql` over the direct connection, with
+   `SET goodvibes.runtime_password = '<the password>';` first, in the same session. Use
+   `psql` if it is installed. Otherwise paste both into the Supabase SQL editor and run
+   them together.
+6. Build `DATABASE_URL` in `.env`. Start from the Transaction pooler string in the
+   Connect dialog (port 6543), and copy the host exactly as shown. Then change two things:
+   - the username, from `postgres.<project-ref>` to `app_runtime.<project-ref>`
+   - the password, to the one from step 5
+
+   Keep `:6543` and put `?pgbouncer=true` on the end. Do not use the string as copied: it
+   logs in as `postgres`, which skips row-level security, so one user could see everyone's
+   data. The app refuses to start on that login.
+7. Prove it works. Wait about 30 seconds, because Supabase's pooler takes a moment to
+   learn a new password, then run `npm run db:verify`. This logs in the way the live app
+   will and confirms one user cannot read another's data. It adds one test row and removes
+   it again.
+
+If `db:verify` fails with a password or "tenant or user" error, check the username has
+the `.<project-ref>` part and the host matches the Connect dialog exactly. Wait 30 seconds
+and try once more. Do not keep retrying, because repeated failures can lock the
+connection out for a while. If it still fails, stop and tell the person this needs their
+developer. Do not switch `DATABASE_URL` to the `postgres` login to get past it, and do not
+change the login check in `src/lib/prisma.ts`.
 
 ## Inngest (background jobs)
 1. Have them create an Inngest account. The app registers itself automatically on the

@@ -26,9 +26,13 @@ Set `VITE_GATE_PASSWORD` in a `.env` file (copy `.env.example` as a starting poi
 
 The DuckDB-WASM integration lets you query a bundled dataset directly in the browser with no server required. Be aware that it ships a large WebAssembly bundle (several MB gzipped). This tradeoff is well-suited to analytical or data-viz apps but is overkill for a minimal brochure page.
 
-## Deploying to Vercel
+## Going live (for your developer)
 
-Vercel auto-detects the Vite project and builds to `dist/`. The included `vercel.json` rewrites all routes to `index.html` so client-side routing works correctly.
+If you're building this with Claude and want it online, ask Claude to prepare the handoff. Putting it online is your developer's step. These notes are for them.
+
+Import the repo into the company's Vercel team, not a personal Hobby account. Hobby is for non-commercial projects and can't deploy a private repo from an organization. Vercel auto-detects the Vite project and builds to `dist/`. The included `vercel.json` rewrites all routes to `index.html` so client-side routing works correctly. If the app uses the password gate, set `VITE_GATE_PASSWORD` in Vercel.
+
+Then set `"live": true` in `.goodvibes` and commit it to `main`. From then on `save-to-github` uses a branch and a pull request, because `main` is production.
 
 ## Tests
 

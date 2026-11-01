@@ -8,8 +8,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "lint": "oxlint",
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
-    "db:deploy": "prisma migrate deploy"
+    "db:deploy": "prisma migrate deploy",
+    "db:verify": "node --env-file=.env node_modules/vitest/vitest.mjs run tests/isolation.test.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^6.16.0",

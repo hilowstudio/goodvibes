@@ -17,10 +17,9 @@ jobs:
           --health-cmd "pg_isready -U postgres"
           --health-interval 5s --health-timeout 5s --health-retries 10
     env:
-      # Owner (migrations + role creation). PG16 ships gen_random_uuid built in.
+      # Owner (migrations + role login + test rows). PG16 ships gen_random_uuid built in.
       DIRECT_URL: postgresql://postgres:ownerpw@localhost:5432/postgres
-      # The suite connects as the NON-OWNER role, so RLS actually applies.
-      RUNTIME_DATABASE_URL: postgresql://app_runtime:runtimepw@localhost:5432/postgres
+      # The app and the suite log in as the NON-OWNER role, so RLS actually applies.
       DATABASE_URL: postgresql://app_runtime:runtimepw@localhost:5432/postgres
     steps:
       - uses: actions/checkout@v4
@@ -30,12 +29,9 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - run: npm run prisma:generate
       - name: Apply migrations as owner
-        run: |
-          psql "$DIRECT_URL" -v ON_ERROR_STOP=1 -f prisma/migrations/0001_init/migration.sql
-          psql "$DIRECT_URL" -v ON_ERROR_STOP=1 -f prisma/migrations/0002_rls/migration.sql
-      - name: Create non-owner runtime role
+        run: npm run db:deploy
+      - name: Give the runtime role its login
         run: |
           psql "$DIRECT_URL" -v ON_ERROR_STOP=1 \
             -c "SET goodvibes.runtime_password = 'runtimepw';" \

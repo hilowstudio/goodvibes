@@ -29,9 +29,17 @@ apply by inspecting the project.
 
 ## Extra checks for a full-stack project
 - **The isolation test exists.** Confirm `tests/isolation.test.ts` is present (the
-  test that proves one user cannot read another user's data) and that CI runs it.
-  This is the most important safety check for an app with accounts. If it is missing,
-  flag it loudly.
+  test that proves one user cannot read another user's data), that it goes through the
+  app's own `runScoped`, and that CI runs it. This is the most important safety check
+  for an app with accounts. If it is missing, flag it loudly.
+- **The app logs in as the safe database role.** Look at the username in `DATABASE_URL`
+  in `.env`, and do not print the value, because the password is in it. The username must
+  be `app_runtime`, or `app_runtime.<project-ref>` through Supabase's pooler. If it is
+  `postgres`, flag it loudly: that login skips row-level security, so every signed-in
+  person can see everyone's data. If `.env` is filled in, run `npm run db:verify`, which
+  proves it against the real database. It adds one test row and removes it again.
+- **There is one way into the database.** `new PrismaClient` appears exactly once, `src/`
+  reads and writes data only through `runScoped`, and nothing in `src/` reads `DIRECT_URL`.
 - **Server secrets stay on the server.** Confirm no service-role key or database URL
   is in any file that ships to the browser (no secret behind `NEXT_PUBLIC_` except the
   Supabase URL and anon key).

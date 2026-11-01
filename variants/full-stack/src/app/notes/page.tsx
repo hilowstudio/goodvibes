@@ -9,7 +9,7 @@ import { deleteNote } from "./actions";
 export default async function NotesPage() {
   const userId = await requireUserId();
   const notes = await runScoped(userId, (tx) =>
-    tx.note.findMany({ orderBy: { createdAt: "desc" } }),
+    tx.note.findMany({ where: { userId }, orderBy: { createdAt: "desc" } }),
   );
 
   return (

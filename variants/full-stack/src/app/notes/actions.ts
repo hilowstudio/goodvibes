@@ -20,7 +20,7 @@ export async function createNote(
     tx.note.create({ data: { userId, content: parsed.data.content } }),
   );
 
-  await inngest.send({ name: "note/created", data: { noteId: note.id } });
+  await inngest.send({ name: "note/created", data: { noteId: note.id, userId } });
   revalidatePath("/notes");
   return ok(null);
 }

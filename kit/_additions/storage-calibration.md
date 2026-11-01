@@ -7,11 +7,13 @@ only move up when the data needs it.
 - If the app runs in the browser and only needs to read a fixed dataset (a dashboard,
   a chart, a presentation), keep the data in the browser, a bundled file queried with
   DuckDB-WASM. No database to set up.
+- If the app keeps a small amount of shared data and the person already has a home for
+  it, use a light server store, for example their existing Airtable, read and written
+  through a small server piece that hides the key. The connect-a-service skill has a
+  vetted adapter for this.
 - If different people have their own private data, or the data needs real
-  relationships and integrity, use Postgres (Supabase) with the per-user isolation
-  already wired into this project.
-- In between sits a light server store (for example, the person's existing Airtable,
-  read and written through a small server piece that hides the key). That option is
-  added in a later step of this system; until then, if an app needs to save data on a
-  server at all, use the Postgres setup even if it feels heavier than the job strictly
-  needs. Do not stand up a database for a brochure site or a read-only chart.
+  relationships and integrity, use Postgres (Supabase). A full-stack project has
+  per-user isolation wired in already. A browser-only project has outgrown its setup at
+  this point, so say so plainly before going further.
+
+Do not stand up a database for a brochure site or a read-only chart.

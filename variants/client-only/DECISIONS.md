@@ -24,4 +24,10 @@ Zod schemas are applied to every value that crosses an external boundary, includ
 
 ## GoodVibes scaffold
 
-This project was generated with the GoodVibes scaffold. The version will be stamped in the `.goodvibes` marker file once the init routine runs.
+This project was generated with the GoodVibes scaffold. The version is recorded in the `.goodvibes` marker file at the project root, which also holds the `live` flag.
+
+## Deployment goes through the developer
+
+_Dated 2026-11-01._
+
+`CLAUDE.md` tells the assistant not to deploy, and to run the handoff instead. That keeps company code out of personal accounts and means a developer sees the app before real people do. Once the repo is connected to Vercel, every push to `main` is a production deploy, so setting `"live": true` in `.goodvibes` moves `save-to-github` to branches and pull requests.

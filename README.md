@@ -13,6 +13,8 @@ Claude Code v2.1.100 or newer (plugins/marketplaces support).
 /plugin install goodvibes@goodvibes
 ```
 
+Installing from inside a session asks for a **GitHub organization**. Enter the client's org so their projects are created there, as private repositories, and not in employees' personal accounts. Leave it blank for personal projects. To change it later, use `/plugin` and open the plugin's settings.
+
 Note: third-party marketplaces do not auto-update by default. Enable auto-update in the /plugin Marketplaces tab to receive new conventions.
 
 ## Use it
@@ -28,11 +30,11 @@ It asks one question: does the app need accounts and saved data on a server, or 
 It writes three artifacts:
 - `CLAUDE.md`: the build rules (how to develop the app).
 - `docs/`: the reasoning (design principles, voice guide, coding standards).
-- `.goodvibes`: version stamp (stays meaningful as the plugin updates).
+- `.goodvibes`: version stamp (stays meaningful as the plugin updates), plus the `live` flag.
 
 ## The two variants
 
-**Full-stack:** Next.js 16 App Router, Supabase for auth and postgres database, Prisma for schema, Inngest for background jobs, deploys to Vercel. Per-user data isolation enforced by postgres row-level security, proven by a keystone test (user A cannot read user B's data).
+**Full-stack:** Next.js 16 App Router, Supabase for auth and postgres database, Prisma for schema, Inngest for background jobs, deploys to Vercel. Per-user data isolation enforced by postgres row-level security, with the app logged in as a role that cannot bypass it, proven by a keystone test (user A cannot read user B's data).
 
 **Browser-only:** React 19 plus Vite SPA, optional DuckDB-WASM for in-browser data, optional shared-password gate (privacy, not security), deploys to Vercel static hosting.
 
@@ -59,10 +61,12 @@ Two more skills run on intent while you build:
 - **Handing off:** when you are ready to give the project to a developer, ask Claude to
   prepare the handoff. It runs a readiness gate and writes a `HANDOFF.md` that tells
   the developer what the app does, what is built, what is still needed, and how to run
-  it.
+  it. Asking Claude to put the app online lands here too, because the developer does
+  the deploy.
 - **Saving to GitHub:** ask Claude to push the project to GitHub ("save my work
   online", "put this on GitHub") and it handles committing, signing in, creating the
-  repository, and pushing, without committing any secret.
+  repository, and pushing, without committing any secret. Once a project is live, it
+  uses a branch and a pull request, so saving never changes the running app.
 
 ## Repo layout
 
@@ -76,3 +80,5 @@ Two more skills run on intent while you build:
 ## For the studio / maintainer
 
 The plugin version lives in `.claude-plugin/plugin.json`. Bump it each release so the `.goodvibes` stamp in client projects is meaningful. The per-variant CI travels into each scaffolded project; the repo-root CI tests both variants here.
+
+**Taking a project live.** Follow the going-live steps in the project's README. The last one matters most: set `"live": true` in `.goodvibes` and commit it to `main`. Until then, "save my work" pushes straight to `main`, and once the repo is connected to Vercel that would be a production deploy.

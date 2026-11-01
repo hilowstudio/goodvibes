@@ -1,6 +1,13 @@
 {
   "name": "goodvibes",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Hi-Low Studio's starter kit: scaffold a production-shaped Next.js or React app and build it with disciplined, handoff-ready conventions.",
-  "author": { "name": "Hi-Low Studio" }
+  "author": { "name": "Hi-Low Studio" },
+  "userConfig": {
+    "github_org": {
+      "type": "string",
+      "title": "GitHub organization",
+      "description": "Company projects are saved under this GitHub organization, not the person's own account. Your developer can tell you the name. Leave it blank for personal projects."
+    }
+  }
 }

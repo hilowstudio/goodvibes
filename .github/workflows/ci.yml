@@ -21,7 +21,6 @@ jobs:
           --health-interval 5s --health-timeout 5s --health-retries 10
     env:
       DIRECT_URL: postgresql://postgres:ownerpw@localhost:5432/postgres
-      RUNTIME_DATABASE_URL: postgresql://app_runtime:runtimepw@localhost:5432/postgres
       DATABASE_URL: postgresql://app_runtime:runtimepw@localhost:5432/postgres
     steps:
       - uses: actions/checkout@v4
@@ -31,12 +30,9 @@ jobs:
           cache: npm
           cache-dependency-path: variants/full-stack/package-lock.json
       - run: npm ci
-      - run: npm run prisma:generate
       - name: Apply migrations as owner
-        run: |
-          psql "$DIRECT_URL" -v ON_ERROR_STOP=1 -f prisma/migrations/0001_init/migration.sql
-          psql "$DIRECT_URL" -v ON_ERROR_STOP=1 -f prisma/migrations/0002_rls/migration.sql
-      - name: Create non-owner runtime role
+        run: npm run db:deploy
+      - name: Give the runtime role its login
         run: psql "$DIRECT_URL" -v ON_ERROR_STOP=1 -c "SET goodvibes.runtime_password = 'runtimepw';" -f prisma/sql/runtime-role.sql
       - run: npm run typecheck
       - run: npm run lint
@@ -85,6 +81,30 @@ jobs:
           test ! -e "$TMP2/AGENTS.md"
           ! grep -q "@AGENTS.md" "$TMP2/CLAUDE.md"
           if node scripts/scaffold.mjs check --cwd "$TMP"; then echo "guard should have failed on populated dir"; exit 1; fi
+          grep -q "## Adding a table" "$TMP/CLAUDE.md"
+          ! grep -q "## Adding a table" "$TMP2/CLAUDE.md"
+          grep -q "## Putting the app online" "$TMP/CLAUDE.md"
+          grep -q "## Putting the app online" "$TMP2/CLAUDE.md"
+          grep -q '"live": false' "$TMP/.goodvibes"
+          # A folder with a stray file is a warning (2), not "already a project" (1).
+          TMP3=$(mktemp -d)
+          touch "$TMP3/brief.pdf"
+          code=0; node scripts/scaffold.mjs check --cwd "$TMP3" || code=$?
+          test "$code" -eq 2
+          # Their README and .gitignore survive, with the starter's secret rules added.
+          TMP4=$(mktemp -d)
+          echo "# Their README" > "$TMP4/README.md"
+          echo "their-ignore" > "$TMP4/.gitignore"
+          node scripts/scaffold.mjs create --variant full-stack --plugin-root "$(pwd)" --cwd "$TMP4"
+          grep -q "# Their README" "$TMP4/README.md"
+          grep -q "their-ignore" "$TMP4/.gitignore"
+          grep -qx ".env" "$TMP4/.gitignore"
+          # A file that would be overwritten stops the scaffold before it writes anything.
+          TMP5=$(mktemp -d)
+          echo "their rules" > "$TMP5/CLAUDE.md"
+          if node scripts/scaffold.mjs create --variant full-stack --plugin-root "$(pwd)" --cwd "$TMP5"; then echo "create should have refused"; exit 1; fi
+          test ! -e "$TMP5/package.json"
+          grep -q "their rules" "$TMP5/CLAUDE.md"
           echo "scaffold smoke OK"
 
   adapters:

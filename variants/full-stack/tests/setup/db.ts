@@ -6,18 +6,16 @@ function requireEnv(name: string): string {
   return value;
 }
 
-// Owner connection (DIRECT_URL): used for schema reset and seeding.
+// Owner connection (DIRECT_URL): used only to plant and clear test rows. The code
+// under test connects through the app's own client (DATABASE_URL), never this pool.
 // Because the table is FORCE RLS, even the owner must set a user context to
 // insert; seedNote sets it transaction-locally for the row it plants.
-export const ownerPool = new Pool({ connectionString: requireEnv("DIRECT_URL") });
+const ownerPool = new Pool({ connectionString: requireEnv("DIRECT_URL") });
 
-// Non-owner runtime connection: what the app and the keystone test use.
-export const runtimePool = new Pool({
-  connectionString: requireEnv("RUNTIME_DATABASE_URL"),
-});
-
-export async function resetNotes(): Promise<void> {
-  await ownerPool.query('TRUNCATE TABLE "notes"');
+// Removes only the given users' rows, never the whole table: npm run db:verify runs
+// this suite against the real database.
+export async function clearNotes(userIds: string[]): Promise<void> {
+  await ownerPool.query('DELETE FROM "notes" WHERE "user_id" = ANY($1::uuid[])', [userIds]);
 }
 
 export async function seedNote(userId: string, content: string): Promise<void> {
@@ -40,6 +38,6 @@ export async function seedNote(userId: string, content: string): Promise<void> {
   }
 }
 
-export async function closePools(): Promise<void> {
-  await Promise.all([ownerPool.end(), runtimePool.end()]);
+export async function closePool(): Promise<void> {
+  await ownerPool.end();
 }
